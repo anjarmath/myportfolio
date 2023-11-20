@@ -1,0 +1,13 @@
+{
+  "id": "mig_clbsn75v1cngcvqcif20",
+  "parentID": "mig_clbsmrdv1cngcvqcieig",
+  "checksum": "1:42e56f1248709d58ec42e347fc24d89ba34861fbf9ae8357d5551e9e7ee99e86",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "image",
+        "table": "portfolio"
+      }
+    }
+  ]
+}

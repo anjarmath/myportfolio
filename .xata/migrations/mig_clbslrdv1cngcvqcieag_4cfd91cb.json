@@ -1,0 +1,16 @@
+{
+  "id": "mig_clbslrdv1cngcvqcieag",
+  "parentID": "mig_clbslmtv1cngcvqcie9g",
+  "checksum": "1:4cfd91cbc0bd38d76ee42ec7abee1e02d52cd4324e8b2f8700b765c9a2234363",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "description",
+          "type": "text"
+        },
+        "table": "portfolio"
+      }
+    }
+  ]
+}

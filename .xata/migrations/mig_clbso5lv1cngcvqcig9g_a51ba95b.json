@@ -1,0 +1,16 @@
+{
+  "id": "mig_clbso5lv1cngcvqcig9g",
+  "parentID": "mig_clbso2dv1cngcvqcig50",
+  "checksum": "1:a51ba95b9ef83e97e82a3257e58c0987eee0118f31e4191525f7b0dd466b912d",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "image",
+          "type": "file"
+        },
+        "table": "my_profile"
+      }
+    }
+  ]
+}

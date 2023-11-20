@@ -1,0 +1,16 @@
+{
+  "id": "mig_clbsmctv1cngcvqciebg",
+  "parentID": "mig_clbsma1suomoghrjktq0",
+  "checksum": "1:777849512f363ede6c93203a11c3e0f926a9bbe28e888fcf8e535af3ce9de6fd",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "github_url",
+          "type": "string"
+        },
+        "table": "portfolio"
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "mig_clbsoetv1cngcvqciglg",
+  "parentID": "mig_clbso5lv1cngcvqcig9g",
+  "checksum": "1:73207cf65bb8150762e95e84c61cf67e4389746432711236b318bfc4161b1c6c",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "resume",
+          "type": "file"
+        },
+        "table": "my_profile"
+      }
+    }
+  ]
+}

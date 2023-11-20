@@ -1,0 +1,18 @@
+{
+  "id": "mig_clbslmtv1cngcvqcie9g",
+  "parentID": "mig_clbsl6hsuomoghrjktp0",
+  "checksum": "1:e97469bf5d051aa83d093cf6fec960e98e5fc12c13831581f4fc89200bda9684",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "title",
+          "type": "string",
+          "notNull": true,
+          "defaultValue": ""
+        },
+        "table": "portfolio"
+      }
+    }
+  ]
+}

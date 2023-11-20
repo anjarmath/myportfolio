@@ -1,0 +1,13 @@
+{
+  "id": "mig_clbso2dv1cngcvqcig50",
+  "parentID": "mig_clbso15v1cngcvqcig40",
+  "checksum": "1:81ef7f13df6491de8ce9e2cad52c5e8271e92bf1e5f1e4bb977fc063da1d26a7",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "resume",
+        "table": "my_profile"
+      }
+    }
+  ]
+}
