@@ -13,12 +13,15 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image';
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { tagList } from '@/app/models/TagModel'
 
 const portfolioFormSchema = z.object({
     title : z.string(),
     description: z.string(),
     url: z.string().optional(),
     github_url: z.string().optional(),
+    tag: z.array(z.string()),
     imageInput: z.string(),
 })
 
@@ -26,6 +29,9 @@ const NewPortfolio = () => {
   const {toast} = useToast()
   const form = useForm<z.infer<typeof portfolioFormSchema>>({
     resolver: zodResolver(portfolioFormSchema),
+    defaultValues: {
+      tag: []
+    }
   })
 
   const [image, setImage] = useState<string | undefined>()
@@ -142,6 +148,52 @@ const NewPortfolio = () => {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                        control={form.control}
+                        name="tag"
+                        render={() => (
+                          <FormItem>
+                            <div className="mb-4">
+                              <FormLabel className="text-base">Tag</FormLabel>
+                            </div>
+                            {tagList.map((tag) => (
+                              <FormField
+                                key={tag.id}
+                                control={form.control}
+                                name="tag"
+                                render={({ field }) => {
+                                  return (
+                                    <FormItem
+                                      key={tag.id}
+                                      className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(tag.id)}
+                                          onCheckedChange={(checked) => {
+                                            return checked
+                                              ? field.onChange([...field.value, tag.id])
+                                              : field.onChange(
+                                                  field.value?.filter(
+                                                    (value) => value !== tag.id
+                                                  )
+                                                )
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        {tag.title}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )
+                                }}
+                              />
+                            ))}
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
               <Button type="submit" className=' w-full'>Submit</Button>
 

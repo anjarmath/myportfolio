@@ -7,8 +7,8 @@ import Image from 'next/image';
 import { LuDownload, LuGithub } from "react-icons/lu";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useEffect, useState } from 'react';
-import Me from './models/MeModel';
-import { Portfolio } from '@/xata';
+import { Experience, MyProfile, Portfolio } from '@/xata';
+import { tagToColor } from './tagcolor';
 
 interface Tools {
   alt: string,
@@ -17,7 +17,7 @@ interface Tools {
 
 export default function Home() {
 
-  const [me, setMe] = useState<Me>();
+  const [me, setMe] = useState<MyProfile>();
   const fetchMe = async () => {
     const res = await fetch("/api/profile");
     const jsonRes = await res.json()
@@ -33,9 +33,20 @@ export default function Home() {
     setPortfolios(jsonRes)
   }
 
+  const [experiences, setExperiences] = useState<Experience[]>([])
+  const fetchExperience = async () => {
+    const res = await fetch("/api/experience");
+    const jsonRes: Experience[] = await res.json()
+
+    const sortedExperience = jsonRes.sort((a, b)=>b.index-a.index)
+
+    setExperiences(sortedExperience)
+  }
+
   useEffect(() => {
     fetchMe();
     fetchPortfolio();
+    fetchExperience();
   }, []);
 
   const myTool: Tools[] = [
@@ -117,6 +128,21 @@ export default function Home() {
           </div>
         </div>
 
+        <div id="experience" className=' px-5 py-8 bg-slate-950'>
+          <div className=' max-w-2xl flex flex-col gap-5 mx-auto items-center'>
+            <span className=' text-hprimary font-bold text-lg'>Experience</span>
+            {
+              experiences.map((experience, index)=>(
+              <div key={index} className=' rounded-xl bg-slate-900 text-white px-5 py-3 w-full'>
+                <h2 className=' font-bold mb-2'>{experience.company}</h2>
+                <h4 className=' mb-2'>{experience.title}</h4>
+                <span className=' text-slate-500 text-sm font-light'>{experience.period}</span>
+              </div>
+              ))
+            }
+          </div>
+        </div>
+
         {/* My Tools */}
         <div id="tools" className=' px-5 py-8'>
           <div className=' max-w-5xl flex mx-auto items-center'>
@@ -142,6 +168,18 @@ export default function Home() {
                   portfolio.is_show && <div key={portfolio.id} className=' rounded-xl bg-white p-3 shadow-lg md:w-[48%]'>
                     <Image alt={portfolio.image?.name?? ""} src={portfolio.image!.url} width={1200} height={800} className=' aspect-video object-cover rounded-lg'></Image>
                     <h3 className=' font-bold mt-4'>{portfolio.title}</h3>
+                    <div className=' flex flex-wrap gap-2 my-2'>
+                      {
+                        portfolio.tag?.map((tag, index)=> {
+                          const color = tagToColor(tag)
+                          return <div key={index} className="rounded-full px-3 py-1 text-white text-xs" style={{
+                            background: color
+                          }}>
+                            {tag}
+                          </div>
+                        })
+                      }
+                    </div>
                     <span className=' text-slate-700 my-4'>{portfolio.description}</span>
                     <div className=' flex my-5 gap-4'>
                       {portfolio.url &&

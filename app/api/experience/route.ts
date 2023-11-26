@@ -1,12 +1,10 @@
-import { removeBase64Prefix } from '@/app/dashboard/base64convert';
-import { getXataClient } from '@/xata'
-import { XataFile } from '@xata.io/client';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { getXataClient } from "@/xata";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function GET(req: NextRequest) {
     const client = getXataClient();
-    const data = await client.db.portfolio.getAll();
+    const data = await client.db.experience.getAll();
     if (!data) {
         return NextResponse.json({"message" : "not found"}, {
             status: 404,
@@ -19,11 +17,9 @@ export async function GET(req: NextRequest) {
 
 const reqValidate = z.object({
     title : z.string(),
-    description: z.string(),
-    url: z.string().optional(),
-    github_url: z.string().optional(),
-    image: z.string(),
-    tag: z.array(z.string())
+    company: z.string(),
+    period: z.string(),
+    index: z.number().default(0),
 })
 
 export async function POST(req: NextRequest) {
@@ -37,20 +33,13 @@ export async function POST(req: NextRequest) {
         )
     }
 
-    const imageBase64 = removeBase64Prefix(validatedReq.data.image)
-
     const client = getXataClient();
     try {
-        await client.db.portfolio.create({
+        await client.db.experience.create({
             title: validatedReq.data.title,
-            description: validatedReq.data.description,
-            url: validatedReq.data.url,
-            github_url: validatedReq.data.github_url,
-            tag: validatedReq.data.tag,
-            image: XataFile.fromBase64(imageBase64, {
-                mediaType: "image/jpg",
-                enablePublicUrl: true
-            }),
+            company: validatedReq.data.company,
+            period: validatedReq.data.period,
+            index: validatedReq.data.index,
         })
 
         return NextResponse.json({"success": true})

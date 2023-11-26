@@ -28,6 +28,7 @@ const tables = [
       { name: "github_url", type: "string" },
       { name: "image", type: "file" },
       { name: "is_show", type: "bool", defaultValue: "true" },
+      { name: "tag", type: "multiple" },
     ],
   },
   {
@@ -35,6 +36,15 @@ const tables = [
     columns: [
       { name: "username", type: "string", unique: true },
       { name: "password", type: "string" },
+    ],
+  },
+  {
+    name: "experience",
+    columns: [
+      { name: "company", type: "string", notNull: true, defaultValue: "null" },
+      { name: "title", type: "string", notNull: true, defaultValue: "null" },
+      { name: "period", type: "string", notNull: true, defaultValue: "null" },
+      { name: "index", type: "int", notNull: true, defaultValue: "0" },
     ],
   },
 ] as const;
@@ -51,10 +61,14 @@ export type PortfolioRecord = Portfolio & XataRecord;
 export type User = InferredTypes["user"];
 export type UserRecord = User & XataRecord;
 
+export type Experience = InferredTypes["experience"];
+export type ExperienceRecord = Experience & XataRecord;
+
 export type DatabaseSchema = {
   my_profile: MyProfileRecord;
   portfolio: PortfolioRecord;
   user: UserRecord;
+  experience: ExperienceRecord;
 };
 
 const DatabaseClient = buildClient();

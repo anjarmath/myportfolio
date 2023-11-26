@@ -10,6 +10,7 @@ const DashboardNav = () => {
             <div className=' flex gap-3 text-white'>
                 <Link href={'/dashboard'} className=' hover:text-primary-foreground'>Profile</Link>
                 <Link href={'/dashboard/portfolio'}>Portfolio</Link>
+                <Link href={'/dashboard/experience'}>Experience</Link>
             </div>
 
             <Link href={'/api/auth/signout'}>

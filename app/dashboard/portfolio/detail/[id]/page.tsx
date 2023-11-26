@@ -18,6 +18,8 @@ import { AlertDialogHeader, AlertDialogFooter } from '@/components/ui/alert-dial
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from '@radix-ui/react-alert-dialog';
 import { Switch } from '@/components/ui/switch';
 import { redirect } from 'next/navigation';
+import { tagList } from '@/app/models/TagModel';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const portfolioFormSchema = z.object({
     title : z.string(),
@@ -26,6 +28,7 @@ const portfolioFormSchema = z.object({
     github_url: z.string().optional(),
     imageInput: z.any(),
     is_show: z.boolean().default(true),
+    tag: z.array(z.string()),
 })
 
 const DetailPage = ({ params } : {
@@ -34,6 +37,9 @@ const DetailPage = ({ params } : {
     const {toast} = useToast()
     const form = useForm<z.infer<typeof portfolioFormSchema>>({
         resolver: zodResolver(portfolioFormSchema),
+        defaultValues: {
+          tag: []
+        }
       })
     
       const [image, setImage] = useState<string | undefined>()
@@ -55,15 +61,17 @@ const DetailPage = ({ params } : {
           method: "PATCH",
           body: JSON.stringify(reqObject)
         })
+        console.log(res.status)
         if (res.status == 200) {
           toast({
             title: "Portfolio Updated Successfully"
           })
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Cannot update portfolio"
+          })
         }
-        toast({
-          variant: "destructive",
-          title: "Cannot update portfolio"
-        })
       }
 
     const fetchPortfolio = async () => {
@@ -78,6 +86,7 @@ const DetailPage = ({ params } : {
         form.setValue("url", jsonRes?.url)
         form.setValue("github_url", jsonRes?.github_url)
         form.setValue("is_show", jsonRes?.is_show ?? true)
+        form.setValue("tag", jsonRes?.tag ?? [])
     }
 
     useEffect(() => {
@@ -93,11 +102,12 @@ const DetailPage = ({ params } : {
               title: "Portfolio Deleted Successfully"
             })
             redirect("/dashboard/portfolio/")
+          } else {
+            toast({
+              variant: "destructive",
+              title: "Cannot delete portfolio"
+            })
           }
-          toast({
-            variant: "destructive",
-            title: "Cannot delete portfolio"
-          })
     }
 
   return (
@@ -200,6 +210,52 @@ const DetailPage = ({ params } : {
                   </FormItem>
                 )}
               />
+            
+            <FormField
+                        control={form.control}
+                        name="tag"
+                        render={() => (
+                          <FormItem>
+                            <div className="mb-4">
+                              <FormLabel className="text-base">Tag</FormLabel>
+                            </div>
+                            {tagList.map((tag) => (
+                              <FormField
+                                key={tag.id}
+                                control={form.control}
+                                name="tag"
+                                render={({ field }) => {
+                                  return (
+                                    <FormItem
+                                      key={tag.id}
+                                      className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(tag.id)}
+                                          onCheckedChange={(checked) => {
+                                            return checked
+                                              ? field.onChange([...field.value, tag.id])
+                                              : field.onChange(
+                                                  field.value?.filter(
+                                                    (value) => value !== tag.id
+                                                  )
+                                                )
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        {tag.title}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )
+                                }}
+                              />
+                            ))}
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
             <div className=' flex gap-3'>
             <AlertDialog>

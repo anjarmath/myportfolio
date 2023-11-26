@@ -44,7 +44,8 @@ const reqValidate = z.object({
     url: z.string().optional(),
     github_url: z.string().optional(),
     image: z.string(),
-    is_show: z.boolean().default(true)
+    is_show: z.boolean().default(true),
+    tag: z.array(z.string())
 })
 export async function PATCH(req: NextRequest, { params } : {
     params: {id: string}
@@ -73,6 +74,7 @@ export async function PATCH(req: NextRequest, { params } : {
                 enablePublicUrl: true
             }),
             is_show: validatedReq.data.is_show,
+            tag: validatedReq.data.tag,
         });
     
         return NextResponse.json({"success": true})
