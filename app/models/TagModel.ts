@@ -68,4 +68,8 @@ export const tagList: Tag[] = [
       id: "mongo db",
       title: "mongo db"
     },
+    {
+      id: "figma",
+      title: "figma"
+    },
   ]

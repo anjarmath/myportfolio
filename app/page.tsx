@@ -128,6 +128,21 @@ export default function Home() {
           </div>
         </div>
 
+        {/* My Tools */}
+        <div id="tools" className=' px-5 py-8'>
+          <div className=' max-w-5xl flex mx-auto items-center'>
+            <h3 className=' font-bold mr-5 text-lg'>Tools</h3>
+            <div className=' flex flex-wrap gap-3'>
+            {
+              myTool.map((tool, index)=>(
+                <Image width={200} height={200} key={index} alt={tool.alt} src={tool.image} className=' aspect-square w-10 object-contain opacity-100 hover:opacity-60 transition-opacity'></Image>
+              ))
+            }
+            </div>
+          </div>
+        </div>
+
+        {/* Experience */}
         <div id="experience" className=' px-5 py-8 bg-slate-950'>
           <div className=' max-w-2xl flex flex-col gap-5 mx-auto items-center'>
             <span className=' text-hprimary font-bold text-lg'>Experience</span>
@@ -140,20 +155,6 @@ export default function Home() {
               </div>
               ))
             }
-          </div>
-        </div>
-
-        {/* My Tools */}
-        <div id="tools" className=' px-5 py-8'>
-          <div className=' max-w-5xl flex mx-auto items-center'>
-            <h3 className=' font-bold mr-5 text-lg'>Tools</h3>
-            <div className=' flex flex-wrap gap-3'>
-            {
-              myTool.map((tool, index)=>(
-                <Image width={200} height={200} key={index} alt={tool.alt} src={tool.image} className=' aspect-square w-10 object-contain opacity-100 hover:opacity-60 transition-opacity'></Image>
-              ))
-            }
-            </div>
           </div>
         </div>
 
