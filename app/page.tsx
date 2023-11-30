@@ -55,6 +55,10 @@ export default function Home() {
       image: "mytools/flutter.svg"
     },
     {
+      alt: "Go Lang",
+      image: "mytools/go.svg"
+    },
+    {
       alt: "React JS",
       image: "mytools/react.svg"
     },
