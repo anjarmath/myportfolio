@@ -163,10 +163,10 @@ export default function Home() {
         <div className=' max-w-5xl mx-auto flex flex-col gap-5 items-center'>
           <span className=' text-hprimary font-bold text-lg'>Portfolio</span>
           <h1 className=' text-4xl font-bold'>Enjoying every process and here’s the results</h1>
-          <div className=' flex flex-wrap gap-3'>
+          <div className=' flex flex-wrap gap-3 justify-center'>
               {
                 portfolios.map((portfolio)=>(
-                  portfolio.is_show && <div key={portfolio.id} className=' rounded-xl bg-white p-3 shadow-lg md:w-[48%]'>
+                  portfolio.is_show && <div key={portfolio.id} className=' rounded-xl bg-white p-3 shadow-lg md:w-[48%] hover:shadow-2xl border-2 hover:border-hprimary transition-all'>
                     <Image alt={portfolio.image?.name?? ""} src={portfolio.image!.url} width={1200} height={800} className=' aspect-video object-cover rounded-lg'></Image>
                     <h3 className=' font-bold mt-4'>{portfolio.title}</h3>
                     <div className=' flex flex-wrap gap-2 my-2'>
