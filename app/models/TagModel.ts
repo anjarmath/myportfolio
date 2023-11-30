@@ -6,7 +6,7 @@ export type Tag = {
 export const tagList: Tag[] = [
     {
       id: "go",
-      title: "go"
+      title: "go lang"
     },
     {
       id: "flask",
