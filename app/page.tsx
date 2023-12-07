@@ -6,6 +6,7 @@ import { LuDownload, LuGithub } from "react-icons/lu";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { Experience, MyProfile, Portfolio } from "@/xata";
 import { tagToColor } from "./tagcolor";
+import { getExperiences, getPortfolios, getProfile } from "./data_fetch";
 
 interface Tools {
   alt: string;
@@ -245,35 +246,4 @@ export default async function Home() {
       </footer>
     </main>
   );
-}
-
-export async function getProfile() {
-  // fetch my profile
-  const resMe = await fetch("https://anjar.algieba-id.com/api/profile", {
-    cache: "no-store",
-  });
-  const me: MyProfile = await resMe.json();
-
-  return me;
-}
-
-export async function getPortfolios() {
-  // fetch portfolios
-  const resPortfolios = await fetch("https://anjar.algieba-id.com/api/portfolio", {
-    cache: "no-store",
-  });
-  const portfolios: Portfolio[] = await resPortfolios.json();
-
-  return portfolios;
-}
-
-export async function getExperiences() {
-  // fetch experiences
-  const resExperiences = await fetch("https://anjar.algieba-id.com/api/experience", {
-    cache: "no-store",
-  });
-  const jsonRes: Experience[] = await resExperiences.json();
-  const experiences: Experience[] = jsonRes.sort((a, b) => b.index - a.index);
-
-  return experiences;
 }
