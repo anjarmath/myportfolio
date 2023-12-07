@@ -4,7 +4,6 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import Image from "next/image";
 import { LuDownload, LuGithub } from "react-icons/lu";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { Experience, MyProfile, Portfolio } from "@/xata";
 import { tagToColor } from "./tagcolor";
 import { getExperiences, getPortfolios, getProfile } from "./data_fetch";
 
@@ -32,18 +31,18 @@ export default async function Home() {
       alt: "React JS",
       image: "mytools/react.svg",
     },
-    {
-      alt: "Next JS",
-      image: "mytools/next.svg",
-    },
+    // {
+    //   alt: "Next JS",
+    //   image: "mytools/next.svg",
+    // },
     {
       alt: "Vue JS",
       image: "mytools/vue.svg",
     },
-    {
-      alt: "Nuxt JS",
-      image: "mytools/nuxt.svg",
-    },
+    // {
+    //   alt: "Nuxt JS",
+    //   image: "mytools/nuxt.svg",
+    // },
     {
       alt: "Figma",
       image: "mytools/figma.svg",
