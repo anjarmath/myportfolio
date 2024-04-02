@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from 'react'
-import DashboardNav from './DashboardNav';
-import Image from 'next/image';
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
+import React, { useEffect } from "react";
+import DashboardNav from "../__components/DashboardNav";
+import Image from "next/image";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { profileFormSchema as formSchema } from "../models/schema";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -15,217 +16,228 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from '@/components/ui/textarea';
-import {externalUrlToBase64, toBase64} from './base64convert';
-import { XataFile } from '@xata.io/client';
-import Link from 'next/link';
-import { useToast } from '@/components/ui/use-toast';
-
-const formSchema = z.object({
-  greeting: z.string(),
-  desc_title: z.string(),
-  desc_content: z.string(),
-  email: z.string().email(),
-  mood: z.string().max(2),
-  resumeInput: z.any(),
-  imageInput: z.any(),
-})
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { fileToXataFIle } from "../__utils/base64convert";
+import { XataFile } from "@xata.io/client";
+import Link from "next/link";
+import { getProfile, updateProfile } from "../_actions/profile_actions";
+import { notFound } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 const DashboardPage = () => {
-  const {toast} = useToast()
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-  })
+  });
 
-  const [image, setImage] = useState<string | undefined>()
-  const [resume, setResume] = useState<string | undefined>()
-  const onImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
-      return;
-    }
-    const base64Image = await toBase64(e.target.files[0])
-    setImage(base64Image as string);
-  };
-  const onResumeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
-      return;
-    }
-    const base64Resume = await toBase64(e.target.files[0])
-    setResume(base64Resume as string);
-  };
-
-  
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const reqObject = {
-      ...values,
-      image: image,
-      resume: resume,
+    const newObjectValues = JSON.parse(JSON.stringify(values));
+    const err = await updateProfile(newObjectValues);
+    if (err) {
+      return toast({
+        description: err,
+        variant: "destructive",
+      });
     }
-    
-    const res =  await fetch("/api/profile", {
-      method: "POST",
-      body: JSON.stringify(reqObject)
-    })
-    if (res.status === 200) {
-      toast({
-        title: "Profile Updated Successfully"
-      })
-      return;
-    }
-    toast({
-      variant: "destructive",
-      title: "Cannot update profile"
-    })
   }
 
-  const fetchMe = async () => {
-    const res = await fetch("/api/profile");
-    const jsonRes = await res.json()
+  const image = form.getValues().image;
+  const resume = form.getValues().resume;
 
-    const base64Image = await externalUrlToBase64((jsonRes?.image as XataFile).url)
-    const base64Resume = await externalUrlToBase64((jsonRes?.resume as XataFile).url)
-    setImage(base64Image)
-    setResume(base64Resume)
-
-    form.setValue("greeting", jsonRes?.greeting ?? "")
-    form.setValue("desc_title", jsonRes?.desc_title?? "")
-    form.setValue("desc_content", jsonRes?.desc_content ?? "")
-    form.setValue("email", jsonRes?.email ?? "")
-    form.setValue("mood", jsonRes?.mood ?? "")
-  }
+  const initiateForm = async () => {
+    const profile = await getProfile();
+    if (!profile) {
+      return notFound();
+    }
+    form.setValue("greeting", profile?.greeting ?? "");
+    form.setValue("desc_title", profile?.desc_title ?? "");
+    form.setValue("desc_content", profile?.desc_content ?? "");
+    form.setValue("email", profile?.email ?? "");
+    form.setValue("mood", profile?.mood ?? "");
+    form.setValue("image", (profile?.image as XataFile) ?? undefined);
+    form.setValue("resume", (profile?.resume as XataFile) ?? undefined);
+  };
 
   useEffect(() => {
-    fetchMe();
+    initiateForm();
   }, []);
 
-
   return (
-    <div className=''>
-      <DashboardNav></DashboardNav>
+    <>
+      <DashboardNav />
 
-      <div className=' max-w-5xl my-8 mx-auto'>
-      <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="greeting"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Greeting</FormLabel>
-              <FormControl>
-                <Textarea
-                    placeholder="Greeting the audience"
-                    className="resize-none"
-                    {...field}
-                  />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <div className=" max-w-5xl my-8 mx-auto">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="greeting"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Greeting</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Greeting the audience"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="desc_title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description Title</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="desc_title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description Title</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="desc_content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description Content</FormLabel>
-              <FormControl>
-              <Textarea
-                    placeholder="Tell the audience about yourself"
-                    className="resize-none"
-                    {...field}
-                  />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="desc_content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description Content</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell the audience about yourself"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="mood"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mood</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="mood"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mood</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {image && (
-          <Image alt="" src={image} width={1000} height={1000} className=' w-44'></Image>
-        )}
-        <FormField
-          control={form.control}
-          name="imageInput"
-          render={({ field }) => (
-            <FormItem onChange={onImageChange}>
-              <FormLabel>Image</FormLabel>
-              <FormControl>
-                <Input type='file' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {resume && (
-          <Link className=' -mb-5' target='_blank' href={resume ?? '#'}>See Resume</Link>
-        )}
-        <FormField
-          control={form.control}
-          name="resumeInput"
-          render={({ field }) => (
-            <FormItem onChange={onResumeChange}>
-              <FormLabel>Resume</FormLabel>
-              <FormControl>
-                <Input type='file' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            {image && (
+              <Image
+                alt=""
+                src={
+                  image?.url != ""
+                    ? image?.url!
+                    : `data:image/jpg;base64,${image?.base64Content}`
+                }
+                width={1000}
+                height={1000}
+                className=" w-44"
+              ></Image>
+            )}
 
-        <Button type="submit" className=' w-full'>Submit</Button>
-      </form>
-    </Form>
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field: { value, ...fieldValues } }) => (
+                <FormItem>
+                  <FormLabel>Change Image</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      {...fieldValues}
+                      onChange={async (e) => {
+                        if (!e.target.files) {
+                          return;
+                        }
+                        const file = e.target.files[0];
+                        const xataFile = await fileToXataFIle(
+                          file,
+                          "image/png"
+                        );
+                        fieldValues.onChange(xataFile);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {resume && (
+              <Link className=" -mb-5" target="_blank" href={resume?.url ?? ""}>
+                See Resume
+              </Link>
+            )}
+            <FormField
+              control={form.control}
+              name="resume"
+              render={({ field: { value, ...fieldValues } }) => (
+                <FormItem>
+                  <FormLabel>Change Resume</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      {...fieldValues}
+                      onChange={async (e) => {
+                        if (!e.target.files) {
+                          return;
+                        }
+                        const file = e.target.files[0];
+                        const xataFile = await fileToXataFIle(
+                          file,
+                          "application/pdf"
+                        );
+
+                        fieldValues.onChange(xataFile);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              disabled={form.formState.isSubmitting}
+              type="submit"
+              className=" w-full"
+            >
+              {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
+          </form>
+        </Form>
       </div>
-    </div>
-  )
-}
+    </>
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;

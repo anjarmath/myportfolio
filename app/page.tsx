@@ -1,11 +1,13 @@
 import Link from "next/link";
-import NavBar from "./NavBar";
+import NavBar from "./__components/NavBar";
 import { FaRegPaperPlane } from "react-icons/fa";
 import Image from "next/image";
 import { LuDownload, LuGithub } from "react-icons/lu";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { tagToColor } from "./tagcolor";
-import { getExperiences, getPortfolios, getProfile } from "./data_fetch";
+import { tagToColor } from "./models/TagModel";
+import { getProfile } from "./_actions/profile_actions";
+import { getExperiences } from "./_actions/experience_actions";
+import { getPortfolios } from "./_actions/portfolio_actions";
 
 interface Tools {
   alt: string;
@@ -13,10 +15,9 @@ interface Tools {
 }
 
 export default async function Home() {
-
-  const me = await getProfile()
-  const portfolios = await getPortfolios()
-  const experiences = await getExperiences()
+  const me = await getProfile();
+  const portfolios = await getPortfolios();
+  const experiences = await getExperiences();
 
   const myTool: Tools[] = [
     {
@@ -54,7 +55,7 @@ export default async function Home() {
       <NavBar />
 
       {/* Hero Section */}
-      <div id="home" className=" px-4 py-16 bg-hprimary-dark">
+      <div id="home" className=" px-4 py-16 min-h-svh grid bg-hprimary-dark">
         <div className=" max-w-5xl mx-auto flex gap-8 flex-col-reverse md:flex-row items-center">
           <div className=" flex-[3] flex flex-col gap-4">
             <h1 className=" text-white font-bold text-4xl">
