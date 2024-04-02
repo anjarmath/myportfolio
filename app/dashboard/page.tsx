@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import DashboardNav from "../__components/DashboardNav";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { removeBase64Prefix, toBase64 } from "../__utils/base64convert";
+import { fileToXataFIle } from "../__utils/base64convert";
 import { XataFile } from "@xata.io/client";
 import Link from "next/link";
 import { getProfile, updateProfile } from "../actions";
@@ -179,16 +179,10 @@ const DashboardPage = () => {
                           return;
                         }
                         const file = e.target.files[0];
-                        const base64 = await toBase64(file);
-                        const base64String = removeBase64Prefix(
-                          base64 as string
+                        const xataFile = await fileToXataFIle(
+                          file,
+                          "image/png"
                         );
-
-                        const xataFile = XataFile.fromBase64(base64String, {
-                          mediaType: "image/jpg",
-                          enablePublicUrl: true,
-                        });
-                        console.log(xataFile);
                         fieldValues.onChange(xataFile);
                       }}
                     />
@@ -218,16 +212,11 @@ const DashboardPage = () => {
                           return;
                         }
                         const file = e.target.files[0];
-                        const base64 = await toBase64(file);
-                        const base64String = removeBase64Prefix(
-                          base64 as string
+                        const xataFile = await fileToXataFIle(
+                          file,
+                          "application/pdf"
                         );
 
-                        const xataFile = XataFile.fromBase64(base64String, {
-                          mediaType: "image/jpg",
-                          enablePublicUrl: true,
-                        });
-                        console.log(xataFile);
                         fieldValues.onChange(xataFile);
                       }}
                     />
