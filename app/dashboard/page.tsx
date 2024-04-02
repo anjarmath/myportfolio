@@ -33,7 +33,8 @@ const DashboardPage = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const err = await updateProfile(values);
+    const newObjectValues = JSON.parse(JSON.stringify(values));
+    const err = await updateProfile(newObjectValues);
     if (err) {
       return toast({
         description: err,

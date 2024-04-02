@@ -13,8 +13,8 @@ export const profileFormSchema = z.object({
         return !file || file.mediaType.startsWith("application/");
       }, "Must be a Document!")
       .refine((file) => {
-        return !file || !file.size || file.size < 1024 * 1024 * 5;
-      }, "File size must be less than 5MB"),
+        return !file || !file.size || file.size < 1024 * 1024 * 2;
+      }, "File size must be less than 2MB"),
     image: z
       .custom<XataFile | undefined>()
       .refine((file) => {
@@ -25,5 +25,5 @@ export const profileFormSchema = z.object({
       }, "Must be an image File!")
       .refine((file) => {
         return !file || !file.size || file.size < 1024 * 1024 * 5;
-      }, "File size must be less than 5MB"),
+      }, "File size must be less than 2MB"),
   });
