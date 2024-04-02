@@ -24,14 +24,22 @@ import { XataFile } from "@xata.io/client";
 import Link from "next/link";
 import { getProfile, updateProfile } from "../actions";
 import { notFound } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 const DashboardPage = () => {
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    return updateProfile(values);
+    const err = await updateProfile(values);
+    if (err) {
+      return toast({
+        description: err,
+        variant: "destructive",
+      });
+    }
   }
 
   const image = form.getValues().image;
@@ -159,7 +167,7 @@ const DashboardPage = () => {
               name="image"
               render={({ field: { value, ...fieldValues } }) => (
                 <FormItem>
-                  <FormLabel>Image</FormLabel>
+                  <FormLabel>Change Image</FormLabel>
                   <FormControl>
                     <Input
                       type="file"
@@ -199,7 +207,7 @@ const DashboardPage = () => {
               name="resume"
               render={({ field: { value, ...fieldValues } }) => (
                 <FormItem>
-                  <FormLabel>Resume</FormLabel>
+                  <FormLabel>Change Resume</FormLabel>
                   <FormControl>
                     <Input
                       type="file"
@@ -228,8 +236,12 @@ const DashboardPage = () => {
               )}
             />
 
-            <Button type="submit" className=" w-full">
-              Submit
+            <Button
+              disabled={form.formState.isSubmitting}
+              type="submit"
+              className=" w-full"
+            >
+              {form.formState.isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </form>
         </Form>
