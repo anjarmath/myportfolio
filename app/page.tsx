@@ -53,7 +53,7 @@ export default async function Home() {
       <NavBar />
 
       {/* Hero Section */}
-      <div id="home" className=" px-4 py-16 min-h-svh bg-hprimary-dark">
+      <div id="home" className=" px-4 py-16 min-h-svh grid bg-hprimary-dark">
         <div className=" max-w-5xl mx-auto flex gap-8 flex-col-reverse md:flex-row items-center">
           <div className=" flex-[3] flex flex-col gap-4">
             <h1 className=" text-white font-bold text-4xl">
