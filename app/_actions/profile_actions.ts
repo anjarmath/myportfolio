@@ -3,11 +3,12 @@
 import { getXataClient } from "@/xata";
 import { profileFormSchema } from "../models/schema";
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_noStore as noStore } from "next/cache";
 
 const xataClient = getXataClient();
 
 export const getProfile = async () => {
+  noStore();
   const profileData = await xataClient.db.my_profile.read(
     "rec_clbronl1j6d65ssbjt60"
   );

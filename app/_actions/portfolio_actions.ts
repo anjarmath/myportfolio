@@ -3,11 +3,12 @@
 import { getXataClient } from "@/xata";
 import { portfolioFormSchema } from "../models/schema";
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_noStore as noStore } from "next/cache";
 
 const xataClient = getXataClient();
 
 export const getPortfolios = async () => {
+  noStore();
   const portfolios = await xataClient.db.portfolio.getAll();
 
   return portfolios;
