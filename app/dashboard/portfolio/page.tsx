@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DashboardNav from "../DashboardNav";
+import DashboardNav from "../../__components/DashboardNav";
 import { FiPlus } from "react-icons/fi";
 import { Portfolio } from "@/xata";
 import { cn } from "@/lib/utils";

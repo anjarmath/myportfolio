@@ -1,4 +1,4 @@
-import { removeBase64Prefix } from '@/app/dashboard/base64convert';
+import { removeBase64Prefix } from '@/app/__utils/base64convert';
 import { getXataClient } from '@/xata'
 import { XataFile } from '@xata.io/client';
 import { NextRequest, NextResponse } from 'next/server';

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import NavBar from "./NavBar";
+import NavBar from "./__components/NavBar";
 import { FaRegPaperPlane } from "react-icons/fa";
 import Image from "next/image";
 import { LuDownload, LuGithub } from "react-icons/lu";

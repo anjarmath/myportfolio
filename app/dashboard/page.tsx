@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import DashboardNav from "./DashboardNav";
+import DashboardNav from "../__components/DashboardNav";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { removeBase64Prefix, toBase64 } from "./base64convert";
+import { removeBase64Prefix, toBase64 } from "../__utils/base64convert";
 import { XataFile } from "@xata.io/client";
 import Link from "next/link";
 import { getProfile, updateProfile } from "../actions";
