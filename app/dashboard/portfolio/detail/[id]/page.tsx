@@ -1,11 +1,7 @@
 "use client";
 
 import DashboardNav from "@/app/__components/DashboardNav";
-import {
-  externalUrlToBase64,
-  fileToXataFIle,
-  toBase64,
-} from "@/app/__utils/base64convert";
+import { fileToXataFIle } from "@/app/__utils/base64convert";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XataFile } from "@xata.io/client";
@@ -17,7 +13,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FiTrash } from "react-icons/fi";
@@ -28,8 +24,6 @@ import Image from "next/image";
 import {
   AlertDialogHeader,
   AlertDialogFooter,
-} from "@/components/ui/alert-dialog";
-import {
   AlertDialog,
   AlertDialogTrigger,
   AlertDialogContent,
@@ -37,14 +31,20 @@ import {
   AlertDialogDescription,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@radix-ui/react-alert-dialog";
+} from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
-import { redirect } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { tagList } from "@/app/models/TagModel";
 import { Checkbox } from "@/components/ui/checkbox";
 import { portfolioFormSchema } from "@/app/models/schema";
+import {
+  deletePortfolio,
+  getPortfolioById,
+  updatePortfolio,
+} from "@/app/_actions/portfolio_actions";
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof portfolioFormSchema>>({
     resolver: zodResolver(portfolioFormSchema),
@@ -53,74 +53,47 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
     },
   });
 
-  const [image, setImage] = useState<string | undefined>();
-  const onImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
-      return;
-    }
-    const base64Image = await toBase64(e.target.files[0]);
-    setImage(base64Image as string);
-  };
-
   async function onSubmit(values: z.infer<typeof portfolioFormSchema>) {
-    const reqObject = {
-      ...values,
-      image: image,
-    };
-
-    const res = await fetch(`/api/portfolio/${params.id}`, {
-      method: "PATCH",
-      body: JSON.stringify(reqObject),
-    });
-    console.log(res.status);
-    if (res.status == 200) {
-      toast({
-        title: "Portfolio Updated Successfully",
-      });
-    } else {
-      toast({
+    const newObjectValues = JSON.parse(JSON.stringify(values));
+    const err = await updatePortfolio(params.id, newObjectValues);
+    if (err) {
+      return toast({
+        description: err,
         variant: "destructive",
-        title: "Cannot update portfolio",
       });
     }
   }
 
-  const fetchPortfolio = async () => {
-    const res = await fetch(`/api/portfolio/${params.id}`);
-    const jsonRes = await res.json();
+  const image = form.getValues().image;
 
-    const base64Image = await externalUrlToBase64(
-      (jsonRes?.image as XataFile).url
-    );
-    setImage(base64Image);
+  const initiateForm = async () => {
+    const profile = await getPortfolioById(params.id);
+    if (!profile) {
+      return notFound();
+    }
 
-    form.setValue("title", jsonRes?.title ?? "");
-    form.setValue("description", jsonRes?.description ?? "");
-    form.setValue("url", jsonRes?.url);
-    form.setValue("github_url", jsonRes?.github_url);
-    form.setValue("is_show", jsonRes?.is_show ?? true);
-    form.setValue("tag", jsonRes?.tag ?? []);
+    form.setValue("title", profile.title ?? "");
+    form.setValue("description", profile.description ?? "");
+    form.setValue("url", profile.url ?? undefined);
+    form.setValue("github_url", profile.github_url ?? undefined);
+    form.setValue("is_show", profile.is_show ?? true);
+    form.setValue("tag", profile.tag ?? []);
+    form.setValue("image", profile.image as XataFile);
   };
 
   useEffect(() => {
-    fetchPortfolio();
+    initiateForm();
   }, []);
 
-  const deletePortfolio = async () => {
-    const res = await fetch(`/api/portfolio/${params.id}`, {
-      method: "DELETE",
-    });
-    if (res.status == 200) {
-      toast({
-        title: "Portfolio Deleted Successfully",
-      });
-      redirect("/dashboard/portfolio/");
-    } else {
-      toast({
+  const deleteThisPortfolio = async () => {
+    const err = await deletePortfolio(params.id);
+    if (err) {
+      return toast({
+        description: err,
         variant: "destructive",
-        title: "Cannot delete portfolio",
       });
     }
+    router.replace("/dashboard/portfolio");
   };
 
   return (
@@ -193,7 +166,11 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             {image && (
               <Image
                 alt=""
-                src={image}
+                src={
+                  image?.url != ""
+                    ? image?.url!
+                    : `data:image/jpg;base64,${image?.base64Content}`
+                }
                 width={1000}
                 height={1000}
                 className=" w-44"
@@ -232,7 +209,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
               control={form.control}
               name="is_show"
               render={({ field }) => (
-                <FormItem onChange={onImageChange}>
+                <FormItem className=" flex items-center h-min gap-3">
                   <FormLabel>Show To Client</FormLabel>
                   <FormControl>
                     <Switch
@@ -293,10 +270,8 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
 
             <div className=" flex gap-3">
               <AlertDialog>
-                <AlertDialogTrigger>
-                  <Button variant="destructive" size="icon">
-                    <FiTrash />
-                  </Button>
+                <AlertDialogTrigger className=" bg-red-500 hover:bg-red-700 text-white px-3 rounded-md">
+                  <FiTrash />
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -310,14 +285,18 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={deletePortfolio}>
+                    <AlertDialogAction onClick={deleteThisPortfolio}>
                       Continue
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button type="submit" className=" w-full">
-                Submit
+              <Button
+                disabled={form.formState.isSubmitting}
+                type="submit"
+                className=" w-full"
+              >
+                {form.formState.isSubmitting ? "Updating..." : "Update"}
               </Button>
             </div>
           </form>

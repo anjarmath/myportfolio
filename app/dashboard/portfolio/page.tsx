@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import DashboardNav from "../../__components/DashboardNav";
 import { FiPlus } from "react-icons/fi";
-import { Portfolio } from "@/xata";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { getPortfolios } from "@/app/actions";
+import { getPortfolios } from "@/app/_actions/portfolio_actions";
 
 const PortfolioPage = async () => {
   const portfolios = await getPortfolios();
@@ -25,9 +23,7 @@ const PortfolioPage = async () => {
           <Link
             key={portfolio.id}
             href={`/dashboard/portfolio/detail/${portfolio.id}`}
-            className={cn(
-              "flex gap-4 select-none space-y-1 border rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground mb-3"
-            )}
+            className="flex gap-4 select-none space-y-1 border rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground mb-3"
           >
             <Image
               alt={portfolio.image?.name ?? ""}

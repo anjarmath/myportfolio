@@ -6,8 +6,8 @@ import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toBase64 } from "../../../__utils/base64convert";
-import { redirect } from "next/navigation";
+import { fileToXataFIle, toBase64 } from "../../../__utils/base64convert";
+import { redirect, useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -22,18 +22,12 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { tagList } from "@/app/models/TagModel";
-
-const portfolioFormSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  url: z.string().optional(),
-  github_url: z.string().optional(),
-  tag: z.array(z.string()),
-  imageInput: z.string(),
-});
+import { portfolioFormSchema } from "@/app/models/schema";
+import { addPortfolio } from "@/app/_actions/portfolio_actions";
 
 const NewPortfolio = () => {
   const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<z.infer<typeof portfolioFormSchema>>({
     resolver: zodResolver(portfolioFormSchema),
     defaultValues: {
@@ -41,40 +35,23 @@ const NewPortfolio = () => {
     },
   });
 
-  const [image, setImage] = useState<string | undefined>();
-  const onImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
-      return;
-    }
-    const base64Image = await toBase64(e.target.files[0]);
-    setImage(base64Image as string);
-  };
-
   async function onSubmit(values: z.infer<typeof portfolioFormSchema>) {
-    const reqObject = {
-      ...values,
-      image: image,
-    };
-
-    const res = await fetch("/api/portfolio", {
-      method: "POST",
-      body: JSON.stringify(reqObject),
-    });
-    if (res.status === 200) {
-      toast({
-        title: "Portfolio Added Successfully",
+    const newObjectValues = JSON.parse(JSON.stringify(values));
+    const err = await addPortfolio(newObjectValues);
+    if (err) {
+      return toast({
+        description: err,
+        variant: "destructive",
       });
-      redirect("/dashboard/portfolio/");
     }
-    toast({
-      variant: "destructive",
-      title: "Cannot add portfolio",
-    });
+    router.replace("/dashboard/portfolio");
   }
+
+  const image = form.getValues().image;
 
   return (
     <div>
-      <DashboardNav></DashboardNav>
+      <DashboardNav />
 
       <div className=" max-w-5xl my-8 mx-auto">
         <Form {...form}>
@@ -142,7 +119,11 @@ const NewPortfolio = () => {
             {image && (
               <Image
                 alt=""
-                src={image}
+                src={
+                  image?.url != ""
+                    ? image?.url!
+                    : `data:image/jpg;base64,${image?.base64Content}`
+                }
                 width={1000}
                 height={1000}
                 className=" w-44"
@@ -150,12 +131,27 @@ const NewPortfolio = () => {
             )}
             <FormField
               control={form.control}
-              name="imageInput"
-              render={({ field }) => (
-                <FormItem onChange={onImageChange}>
-                  <FormLabel>Image</FormLabel>
+              name="image"
+              render={({ field: { value, ...fieldValues } }) => (
+                <FormItem>
+                  <FormLabel>Change Image</FormLabel>
                   <FormControl>
-                    <Input type="file" {...field} />
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      {...fieldValues}
+                      onChange={async (e) => {
+                        if (!e.target.files) {
+                          return;
+                        }
+                        const file = e.target.files[0];
+                        const xataFile = await fileToXataFIle(
+                          file,
+                          "image/png"
+                        );
+                        fieldValues.onChange(xataFile);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -208,8 +204,12 @@ const NewPortfolio = () => {
               )}
             />
 
-            <Button type="submit" className=" w-full">
-              Submit
+            <Button
+              disabled={form.formState.isSubmitting}
+              type="submit"
+              className=" w-full"
+            >
+              {form.formState.isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           </form>
         </Form>
