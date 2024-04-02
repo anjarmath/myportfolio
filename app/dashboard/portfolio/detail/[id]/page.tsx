@@ -1,7 +1,11 @@
 "use client";
 
 import DashboardNav from "@/app/__components/DashboardNav";
-import { externalUrlToBase64, toBase64 } from "@/app/__utils/base64convert";
+import {
+  externalUrlToBase64,
+  fileToXataFIle,
+  toBase64,
+} from "@/app/__utils/base64convert";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XataFile } from "@xata.io/client";
@@ -38,16 +42,7 @@ import { Switch } from "@/components/ui/switch";
 import { redirect } from "next/navigation";
 import { tagList } from "@/app/models/TagModel";
 import { Checkbox } from "@/components/ui/checkbox";
-
-const portfolioFormSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  url: z.string().optional(),
-  github_url: z.string().optional(),
-  imageInput: z.any(),
-  is_show: z.boolean().default(true),
-  tag: z.array(z.string()),
-});
+import { portfolioFormSchema } from "@/app/models/schema";
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const { toast } = useToast();
@@ -206,12 +201,27 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             )}
             <FormField
               control={form.control}
-              name="imageInput"
-              render={({ field }) => (
-                <FormItem onChange={onImageChange}>
-                  <FormLabel>Image</FormLabel>
+              name="image"
+              render={({ field: { value, ...fieldValues } }) => (
+                <FormItem>
+                  <FormLabel>Change Image</FormLabel>
                   <FormControl>
-                    <Input type="file" {...field} />
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      {...fieldValues}
+                      onChange={async (e) => {
+                        if (!e.target.files) {
+                          return;
+                        }
+                        const file = e.target.files[0];
+                        const xataFile = await fileToXataFIle(
+                          file,
+                          "image/png"
+                        );
+                        fieldValues.onChange(xataFile);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

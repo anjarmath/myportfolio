@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { fileToXataFIle } from "../__utils/base64convert";
 import { XataFile } from "@xata.io/client";
 import Link from "next/link";
-import { getProfile, updateProfile } from "../actions";
+import { getProfile, updateProfile } from "../_actions/profile_actions";
 import { notFound } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 

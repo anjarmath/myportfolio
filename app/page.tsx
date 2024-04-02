@@ -5,7 +5,9 @@ import Image from "next/image";
 import { LuDownload, LuGithub } from "react-icons/lu";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { tagToColor } from "./models/TagModel";
-import { getExperiences, getPortfolios, getProfile } from "./actions";
+import { getProfile } from "./_actions/profile_actions";
+import { getExperiences } from "./_actions/experience_actions";
+import { getPortfolios } from "./_actions/portfolio_actions";
 
 interface Tools {
   alt: string;
