@@ -16,7 +16,6 @@ import {
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { FiTrash } from "react-icons/fi";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -42,6 +41,7 @@ import {
   getPortfolioById,
   updatePortfolio,
 } from "@/app/_actions/portfolio_actions";
+import { Trash2 } from "lucide-react";
 
 const DetailPage = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -271,7 +271,7 @@ const DetailPage = ({ params }: { params: { id: string } }) => {
             <div className=" flex gap-3">
               <AlertDialog>
                 <AlertDialogTrigger className=" bg-red-500 hover:bg-red-700 text-white px-3 rounded-md">
-                  <FiTrash />
+                  <Trash2 />
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>

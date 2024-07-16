@@ -1,10 +1,10 @@
 import React from "react";
 import DashboardNav from "../../__components/DashboardNav";
-import { FiPlus } from "react-icons/fi";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { getPortfolios } from "@/app/_actions/portfolio_actions";
+import { Plus } from "lucide-react";
 
 const PortfolioPage = async () => {
   const portfolios = await getPortfolios();
@@ -14,10 +14,11 @@ const PortfolioPage = async () => {
       <DashboardNav></DashboardNav>
 
       <div className=" max-w-5xl my-8 mx-auto">
-        <Link href="/dashboard/portfolio/new">
-          <Button variant="outline" className=" mb-5">
-            <FiPlus className="mr-2 h-4 w-4" /> Add New Portfolio
-          </Button>
+        <Link
+          href="/dashboard/portfolio/new"
+          className={`${buttonVariants({ variant: "outline" })} mb-5`}
+        >
+          <Plus /> Add New Portfolio
         </Link>
         {portfolios.map((portfolio) => (
           <Link

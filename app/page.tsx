@@ -1,13 +1,11 @@
 import Link from "next/link";
 import NavBar from "./__components/NavBar";
-import { FaRegPaperPlane } from "react-icons/fa";
 import Image from "next/image";
-import { LuDownload, LuGithub } from "react-icons/lu";
-import { FaArrowRightLong } from "react-icons/fa6";
 import { tagToColor } from "./models/TagModel";
 import { getProfile } from "./_actions/profile_actions";
 import { getExperiences } from "./_actions/experience_actions";
 import { getPortfolios } from "./_actions/portfolio_actions";
+import { Download, Github, MoveRight, Send } from "lucide-react";
 
 interface Tools {
   alt: string;
@@ -55,7 +53,7 @@ export default async function Home() {
       <NavBar />
 
       {/* Hero Section */}
-      <div id="home" className=" px-4 py-16 min-h-svh grid bg-hprimary-dark">
+      <div id="home" className=" px-4 py-16 min-h-screen grid bg-hprimary-dark">
         <div className=" max-w-5xl mx-auto flex gap-8 flex-col-reverse md:flex-row items-center">
           <div className=" flex-[3] flex flex-col gap-4">
             <h1 className=" text-white font-bold text-4xl">
@@ -108,7 +106,7 @@ export default async function Home() {
               href={`${me?.resume!.url}`}
               className=" flex items-center gap-2 text-lg font-bold hover:text-hprimary transition-colors"
             >
-              <LuDownload />
+              <Download />
               Resume
             </Link>
           </div>
@@ -201,7 +199,7 @@ export default async function Home() {
                           href={portfolio.url}
                           className=" flex gap-1 items-center hover:text-hprimary hover:underline transition-all"
                         >
-                          <FaArrowRightLong /> Try It
+                          <MoveRight /> Try It
                         </Link>
                       )}
                       {portfolio.github_url && (
@@ -209,7 +207,7 @@ export default async function Home() {
                           href={portfolio.github_url}
                           className=" flex gap-1 items-center hover:text-hprimary hover:underline transition-all"
                         >
-                          <LuGithub /> Github
+                          <Github /> Github
                         </Link>
                       )}
                     </div>
@@ -232,7 +230,7 @@ export default async function Home() {
           </p>
           <Link href={`mailto:${me?.email}`} className=" ml-auto">
             <button className=" px-3 py-2 bg-white rounded-md w-full md:w-auto flex items-center gap-2">
-              Send Me an Email <FaRegPaperPlane />
+              Send Me an Email <Send />
             </button>
           </Link>
         </div>

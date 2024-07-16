@@ -2,7 +2,7 @@
 
 import React, { useState, Key } from "react";
 import Link from "next/link";
-import { HiMenuAlt3 } from "react-icons/hi";
+import { Menu } from "lucide-react";
 
 interface MenuItem {
   id: Key;
@@ -72,7 +72,7 @@ const NavBar = () => {
           </Link>
         </div>
         <button className=" p-3 block lg:hidden" onClick={drawerButtonClick}>
-          <HiMenuAlt3></HiMenuAlt3>
+          <Menu />
         </button>
       </div>
     </div>

@@ -41,3 +41,10 @@ export const portfolioFormSchema = z.object({
   is_show: z.boolean().default(true),
   tag: z.array(z.string()),
 });
+
+export const experienceFormSchema = z.object({
+  company: z.string(),
+  title: z.string(),
+  period: z.string(),
+  index: z.coerce.number(),
+});
