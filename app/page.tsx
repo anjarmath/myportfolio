@@ -5,17 +5,51 @@ import { tagToColor } from "./models/TagModel";
 import { getProfile } from "./_actions/profile_actions";
 import { getExperiences } from "./_actions/experience_actions";
 import { getPortfolios } from "./_actions/portfolio_actions";
-import { Download, Github, MoveRight, Send } from "lucide-react";
+import {
+  Download,
+  Github,
+  Linkedin,
+  LucideIcon,
+  Mail,
+  MoveRight,
+  Send,
+  Youtube,
+} from "lucide-react";
+import { ReactElement } from "react";
 
 interface Tools {
   alt: string;
   image: string;
 }
 
+interface Account {
+  icon: ReactElement<LucideIcon>;
+  href: string;
+}
+
 export default async function Home() {
   const me = await getProfile();
   const portfolios = await getPortfolios();
   const experiences = await getExperiences();
+
+  const myAccount: Account[] = [
+    {
+      icon: <Github />,
+      href: "https://github.com/anjarmath",
+    },
+    {
+      icon: <Linkedin />,
+      href: "https://www.linkedin.com/in/anjar2hariadi/",
+    },
+    {
+      icon: <Mail />,
+      href: `mailto:creative.anjar@gmail.com`,
+    },
+    {
+      icon: <Youtube />,
+      href: "https://www.youtube.com/@an.alphaleonis",
+    },
+  ];
 
   const myTool: Tools[] = [
     {
@@ -70,6 +104,17 @@ export default async function Home() {
                 Get Started
               </button>
             </Link>
+            <div className=" flex gap-6 mt-4">
+              {myAccount.map((account, index) => (
+                <Link
+                  href={account.href}
+                  key={index}
+                  className=" text-white hover:text-hprimary transition-colors"
+                >
+                  {account.icon}
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className=" flex-[2]">
@@ -83,6 +128,20 @@ export default async function Home() {
               src={"/hero-image.png"}
             ></Image>
           </div>
+        </div>
+      </div>
+
+      {/* New Info Banner */}
+      <div className=" px-5 py-8 bg-red-50">
+        <div className=" max-w-5xl mx-auto flex gap-5 items-center justify-center">
+          <span>
+            <b className=" text-red-500">NEW:</b> Now I'm on Youtube
+          </span>
+          <Link href={"https://www.youtube.com/@an.alphaleonis"}>
+            <button className=" text-white bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 transition-colors w-full md:w-auto flex gap-2 items-center">
+              <Youtube /> Visit My Channel
+            </button>
+          </Link>
         </div>
       </div>
 
