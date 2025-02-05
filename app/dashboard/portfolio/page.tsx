@@ -11,7 +11,7 @@ const PortfolioPage = async () => {
 
   return (
     <div>
-      <DashboardNav></DashboardNav>
+      <DashboardNav />
 
       <div className=" max-w-5xl my-8 mx-auto">
         <Link

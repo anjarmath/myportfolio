@@ -28,9 +28,11 @@ interface Account {
 }
 
 export default async function Home() {
-  const me = await getProfile();
-  const portfolios = await getPortfolios();
-  const experiences = await getExperiences();
+  const [me, portfolios, experiences] = await Promise.all([
+    getProfile(),
+    getPortfolios(),
+    getExperiences(),
+  ]);
 
   const myAccount: Account[] = [
     {

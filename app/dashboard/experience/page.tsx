@@ -2,10 +2,7 @@ import DashboardNav from "@/app/__components/DashboardNav";
 import DeleteExperienceDialog from "@/app/__components/ExperienceDeleteDialog";
 import EditExperienceDialog from "@/app/__components/ExperienceEditDialog";
 import NewExperienceDialog from "@/app/__components/ExperienceNewDialog";
-import {
-  deleteExperience,
-  getExperiences,
-} from "@/app/_actions/experience_actions";
+import { getExperiences } from "@/app/_actions/experience_actions";
 import React from "react";
 
 const ExperiencePage = async () => {
